@@ -6,7 +6,7 @@ La fonction register du contrat Main est alors appelé avec comme arguement l'ad
 Un nouveau bateau est alors register et apparaît donc sur la grille.
 Les bateaux appartenant au compte connecté sont en vert, les autres sont en rouge.
 
-On a rajouté également des déplacements pour les bateaux. (& compléter)
+On a rajouté également des déplacements pour les bateaux. (à compléter)
 
 On a pu coder deux type de bateau :
 -Les déterministes :
