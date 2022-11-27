@@ -3,6 +3,7 @@ pragma solidity ^0.8;
 
 
 import "./MyShip2.sol";
+import "./Ship.sol";
 
 
 contract ShipFactory {
