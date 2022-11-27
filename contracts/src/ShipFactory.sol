@@ -15,8 +15,8 @@ contract ShipFactory {
   ShipType[] listTypeShip;
 
   constructor() {
-    listTypeShip.push(ShipType("a"));
-    listTypeShip.push(ShipType("b"));
+    listTypeShip.push(ShipType("DeterministicShip"));
+    listTypeShip.push(ShipType("RandomShip"));
   }
 
   function getListTypeShip() external view returns (ShipType[] memory) {
@@ -25,8 +25,9 @@ contract ShipFactory {
 
   function deployShip(string memory st) external {
     address a;
-    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("a")))) a = address(new MyShip());
-    else a = address(new MyShip2());
+    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("DeterministicShip")))) a = address(new MyShip());
+    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("RandomShip")))) a = address(new MyShip2());
+    else a = address(new MyShip());
     emit ShipDeploy(a);
   }
 }

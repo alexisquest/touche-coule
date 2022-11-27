@@ -73,6 +73,7 @@ const useWallet2 = () => {
   }, [details, contract])
 }
 
+var listTypeShip: []
 type Ship = {}
 type ShipCELL = { owner: string }
 const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2>) => {
@@ -184,6 +185,9 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
 
     wallet.contract.on('Move', onMove)
     wallet2?.contract.on('ShipDeploy', onShipDeploy)
+
+
+    wallet2?.contract.getListTypeShip().then(res => listTypeShip = (res as []))
     return () => {
       console.log('Unregistering')
       wallet.contract.off('Registered', onRegistered)
@@ -197,10 +201,11 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
 
 
 
-const Buttons = ({ wallet, wallet2, typeShip }: { wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2>, typeShip : string }) => {
+const Buttons = ({ wallet, wallet2, typeShip }: { wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2>, typeShip: string }) => {
   const next = () => wallet?.contract.turn().then(r => console.log("turn over"))
   const register = async () => {
-    wallet2?.contract.deployShip(typeShip).then(res => console.log("deploy done"))
+    console.log(typeShip)
+    //wallet2?.contract.deployShip(typeShip).then(res => console.log("deploy done"))
   }
   return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>
@@ -216,10 +221,9 @@ const CELLS = new Array(100 * 100)
 
 
 export const App = () => {
-  const [typeShip, setTypeShip] = useState("a")
+  const [typeShip, setTypeShip] = useState<string>("a")
   const wallet = useWallet()
   const wallet2 = useWallet2()
-  const listTypeShip = wallet2?.contract.getListTypeShip()
   const board = useBoard(wallet, wallet2)
   const size = useWindowSize()
   const st = {
@@ -241,6 +245,11 @@ export const App = () => {
             <div key={index} className={styles.cell} style={{ background }} />
           )
         })}
+      </div>
+      <div>
+        <select onChange={(v) => setTypeShip(v.target.value)}>
+          {listTypeShip && listTypeShip.map(v => <option value={v}>{v}</option>)}
+        </select>
       </div>
       <Buttons wallet={wallet} wallet2={wallet2} typeShip={typeShip} />
     </div>
