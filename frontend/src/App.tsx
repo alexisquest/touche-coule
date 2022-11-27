@@ -197,11 +197,10 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
 
 
 
-const Buttons = ({ wallet, wallet2 }: { wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2> }) => {
+const Buttons = ({ wallet, wallet2, typeShip }: { wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2>, typeShip : string }) => {
   const next = () => wallet?.contract.turn().then(r => console.log("turn over"))
   const register = async () => {
-    wallet2?.contract.getListTypeShip().then(res => console.log(res))
-    wallet2?.contract.deployShip(0).then(res => console.log("deploy done"))
+    wallet2?.contract.deployShip(typeShip).then(res => console.log("deploy done"))
   }
   return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>
@@ -215,21 +214,12 @@ const Buttons = ({ wallet, wallet2 }: { wallet: ReturnType<typeof useWallet>, wa
 
 const CELLS = new Array(100 * 100)
 
-type Color = string
-type ColorOwner = { owner: string, color: Color }
-let colorOwner: ColorOwner[] = []
-
-const getColorOwner = (owner: string): Color => {
-  let color = colorOwner?.find(co => co?.owner == owner)
-  if (color) return color.color
-  let newColor: string | undefined = '#' + (Math.random() * 0xFFFFFF << 0).toString(16)
-  colorOwner.push({ owner: owner, color: newColor })
-  return newColor
-}
 
 export const App = () => {
+  const [typeShip, setTypeShip] = useState("a")
   const wallet = useWallet()
   const wallet2 = useWallet2()
+  const listTypeShip = wallet2?.contract.getListTypeShip()
   const board = useBoard(wallet, wallet2)
   const size = useWindowSize()
   const st = {
@@ -252,7 +242,7 @@ export const App = () => {
           )
         })}
       </div>
-      <Buttons wallet={wallet} wallet2={wallet2} />
+      <Buttons wallet={wallet} wallet2={wallet2} typeShip={typeShip} />
     </div>
   )
 }
