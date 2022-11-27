@@ -74,12 +74,12 @@ const useWallet2 = () => {
 }
 
 type Ship = {}
-type ShipCELL = {owner : string}
+type ShipCELL = { owner: string }
 const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2>) => {
   const [board, setBoard] = useState<(null | Ship)[][]>([])
   useAffect(async () => {
     if (!wallet) return
-    if(!wallet2) return 
+    if (!wallet2) return
     const onRegistered = (
       id: BigNumber,
       owner: string,
@@ -111,7 +111,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
         })
       })
     }
-    const onMove = (id: BigNumber,owner: string, exX: BigNumber, exY: BigNumber, x: BigNumber, y: BigNumber) => {
+    const onMove = (id: BigNumber, owner: string, exX: BigNumber, exY: BigNumber, x: BigNumber, y: BigNumber) => {
       console.log('onMove')
       const xt = exX.toNumber();
       const yt = exY.toNumber();
@@ -148,7 +148,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
       const registeredEvent = await wallet.contract.queryFilter('Registered', 0)
       registeredEvent.forEach(event => {
         const { index, owner, x, y } = event.args
-          onRegistered(index, owner, x, y)
+        onRegistered(index, owner, x, y)
       })
     }
     const updateTouched = async () => {
@@ -162,10 +162,11 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
     const updateMove = async () => {
       const registeredEvent = await wallet.contract.queryFilter('Move', 0)
       registeredEvent.forEach(event => {
-        const { index, owner,exX, exY,  x, y } = event.args
-        onMove(index, owner,exX, exY, x, y)
-        
+        const { index, owner, exX, exY, x, y } = event.args
+        onMove(index, owner, exX, exY, x, y)
+
       })
+    }
     const onShipDeploy = (a: string) => {
       console.log('onShipDeploy')
       wallet.contract.register(a)
@@ -181,13 +182,13 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
     wallet.contract.on('Registered', onRegistered)
     wallet.contract.on('Touched', onTouched)
 
-    wallet.contract.on('Move',onMove)
+    wallet.contract.on('Move', onMove)
     wallet2?.contract.on('ShipDeploy', onShipDeploy)
     return () => {
       console.log('Unregistering')
       wallet.contract.off('Registered', onRegistered)
       wallet.contract.off('Touched', onTouched)
-      wallet.contract.off('Move',onMove)
+      wallet.contract.off('Move', onMove)
       wallet2?.contract.off('ShipDeploy', onShipDeploy)
     }
   }, [wallet, wallet2])
@@ -196,7 +197,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
 
 
 
-const Buttons = ({ wallet, wallet2 }: { wallet: ReturnType<typeof useWallet> , wallet2 : ReturnType<typeof useWallet2>}) => {
+const Buttons = ({ wallet, wallet2 }: { wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2> }) => {
   const next = () => wallet?.contract.turn().then(r => console.log("turn over"))
   const register = async () => {
     wallet2?.contract.getListTypeShip().then(res => console.log(res))
@@ -243,7 +244,7 @@ export const App = () => {
         {CELLS.fill(0).map((_, index) => {
           const x = Math.floor(index % board?.length ?? 0)
           const y = Math.floor(index / board?.[0]?.length ?? 0)
-          let shipOwner : string = board?.[x]?.[y]  ? (board?.[x]?.[y] as ShipCELL).owner : ""
+          let shipOwner: string = board?.[x]?.[y] ? (board?.[x]?.[y] as ShipCELL).owner : ""
           const color = (shipOwner == wallet?.details.account) ? "green" : "red"
           const background = board?.[x]?.[y] ? color : undefined
           return (
@@ -251,7 +252,7 @@ export const App = () => {
           )
         })}
       </div>
-      <Buttons wallet={wallet} wallet2={wallet2}/>
+      <Buttons wallet={wallet} wallet2={wallet2} />
     </div>
   )
 }
