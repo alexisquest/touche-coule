@@ -111,7 +111,31 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
         })
       })
     }
-    
+    const onMove = (id: BigNumber,owner: string, exX: BigNumber, exY: BigNumber, x: BigNumber, y: BigNumber) => {
+      console.log('onMove')
+      const xt = exX.toNumber();
+      const yt = exY.toNumber();
+      setBoard(board => {
+        return board.map((x_, index) => {
+          if (index !== xt) return x_
+          return x_.map((y_, indey) => {
+            if (indey !== yt) return y_
+            return null
+          })
+        })
+      })
+      setBoard(board => {
+        return board.map((x_, index) => {
+          if (index !== x.toNumber()) return x_
+          return x_.map((y_, indey) => {
+            if (indey !== y.toNumber()) return y_
+            return { owner, index: id.toNumber() }
+          })
+        })
+      })
+    }
+
+
     const updateSize = async () => {
       const [event] = await wallet.contract.queryFilter('Size', 0)
       const width = event.args.width.toNumber()
@@ -134,6 +158,14 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
         onTouched(ship, x, y)
       })
     }
+
+    const updateMove = async () => {
+      const registeredEvent = await wallet.contract.queryFilter('Move', 0)
+      registeredEvent.forEach(event => {
+        const { index, owner,exX, exY,  x, y } = event.args
+        onMove(index, owner,exX, exY, x, y)
+        
+      })
     const onShipDeploy = (a: string) => {
       console.log('onShipDeploy')
       wallet.contract.register(a)
@@ -144,14 +176,18 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
     await updateSize()
     await updateRegistered()
     await updateTouched()
+    await updateMove()
     console.log('Registering')
     wallet.contract.on('Registered', onRegistered)
     wallet.contract.on('Touched', onTouched)
+
+    wallet.contract.on('Move',onMove)
     wallet2?.contract.on('ShipDeploy', onShipDeploy)
     return () => {
       console.log('Unregistering')
       wallet.contract.off('Registered', onRegistered)
       wallet.contract.off('Touched', onTouched)
+      wallet.contract.off('Move',onMove)
       wallet2?.contract.off('ShipDeploy', onShipDeploy)
     }
   }, [wallet, wallet2])
