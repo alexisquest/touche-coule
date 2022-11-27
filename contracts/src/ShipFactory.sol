@@ -2,7 +2,7 @@
 pragma solidity ^0.8;
 
 
-import "./MyShip2.sol";
+import "./RandomShip.sol";
 import "./Ship.sol";
 
 
@@ -25,9 +25,9 @@ contract ShipFactory {
 
   function deployShip(string memory st) external {
     address a;
-    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("DeterministicShip")))) a = address(new MyShip());
-    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("RandomShip")))) a = address(new MyShip2());
-    else a = address(new MyShip());
+    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("DeterministicShip")))) a = address(new DeterministicShip());
+    if (keccak256(abi.encodePacked((st))) == keccak256(abi.encodePacked(("RandomShip")))) a = address(new RandomShip());
+    else a = address(new DeterministicShip());
     emit ShipDeploy(a);
   }
 }

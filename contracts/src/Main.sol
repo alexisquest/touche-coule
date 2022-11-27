@@ -2,7 +2,7 @@
 pragma solidity ^0.8;
 
 import './Ship.sol';
-import './MyShip.sol';
+import './DeterministicShip.sol';
 import 'hardhat/console.sol';
 
 struct Game {

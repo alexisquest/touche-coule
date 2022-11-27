@@ -1,14 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import './MyShip.sol';
+import './Ship.sol';
 
+struct Coordinates {
+    uint x;
+    uint y;
+}
 
-contract MyShip2 is Ship{
+contract DeterministicShip is Ship{
     Coordinates private c;
     uint private id;
+    Coordinates private target;
 
     constructor() {
+        target.x = 0;
+        target.y = 0;
     }
 
     function update(uint _x, uint _y) public virtual override{
@@ -16,19 +23,33 @@ contract MyShip2 is Ship{
         c.y = _y;
     }
 
+    
     function fire() public virtual override returns (uint, uint){
-        uint x;
-        uint y;
+        uint x = target.x;
+        uint y = target.y;
         do{
-            x = uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender,"xx"))) % 50;
-            y = uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender,"y"))) % 50;
-        }while(x == c.x || y == c.y);
+            if(target.y==50){
+                if(target.x == 50){
+                    target.x = 0;
+
+                }
+                else{
+                    target.x++;
+                }
+                
+                target.y = 0;
+            }
+            else{
+                target.y++;
+            }
+
+        }while(target.x==c.x && target.y==c.y);
         return (x,y);
     }
 
     function place(uint width, uint height) public virtual override returns (uint, uint){
-        uint x = 1;
-        uint y = 1;
+        uint x = uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender,"x"))) % width;
+        uint y = uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender,"y"))) % height;
         return (x,y);
     }
 
@@ -56,7 +77,8 @@ contract MyShip2 is Ship{
         if(x<=width && y<=height){
             update(x,y);
         }
-        return(c.x,c.y);    
+        return(c.x,c.y);
+               
     }
 
 }

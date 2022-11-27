@@ -204,8 +204,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<type
 const Buttons = ({ wallet, wallet2, typeShip }: { wallet: ReturnType<typeof useWallet>, wallet2: ReturnType<typeof useWallet2>, typeShip: string }) => {
   const next = () => wallet?.contract.turn().then(r => console.log("turn over"))
   const register = async () => {
-    console.log(typeShip)
-    //wallet2?.contract.deployShip(typeShip).then(res => console.log("deploy done"))
+    wallet2?.contract.deployShip(typeShip).then(res => console.log("deploy done"))
   }
   return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>
